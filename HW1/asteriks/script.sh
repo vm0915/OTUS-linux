@@ -17,7 +17,15 @@ sudo make -j16 && \
 sudo make -j16 O=$BUILD modules && \
 sudo make O=$BUILD modules_install && sudo make O=$BUILD install
 
+sudo rm -f /boot/*3.10*
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 sudo grub2-set-default 0
-sudo ls /boot
-echo ***END OF PROVISIONING***
+sudo sudo shutdown -r now
+
+cd /home/vagrant
+wget https://download.virtualbox.org/virtualbox/6.1.6/VBoxGuestAdditions_6.1.6.iso
+sudo mount /home/vagrant/VBoxGuestAdditions_6.1.6.iso /media -o loop
+cd /media
+sudo ./VBoxLinuxAdditions.run
+
+
