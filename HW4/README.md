@@ -1,4 +1,4 @@
-#ZFS
+# ZFS
 Установка zfs
 ```bash
 $ sudo yum install -y yum-utils
@@ -13,7 +13,7 @@ $ sudo yum install -y zfs
 ```bash
 $ sudo /sbin/modprobe zfs
 ```
-##1 Определить алгоритм с наилучшим сжатием
+## 1. Определить алгоритм с наилучшим сжатием
 Возможные алгоритмы сжатия
 ```bash
 compression=on|off|gzip|gzip-N|lz4|lzjb|zle
@@ -48,7 +48,7 @@ mypool/data2       lz4  1.08x
 mypool/data3      lzjb  1.07x
 mypool/data4       zle  1.08x
 ```
-##2 Определить настройки pool’a
+## 2. Определить настройки pool’a
 Импортируем zpool
 ```bash
 $ sudo zpool import -d .
@@ -79,7 +79,7 @@ otus  recordsize   128K        local
 otus  compression  zle         local
 otus  checksum     sha256      local
 ```
-##3 Найти сообщение от преподавателей
+## 3. Найти сообщение от преподавателей
 Восстанавливаем снапшот
 ```bash
 $ sudo zfs receive otus/storage@snap1 < otus_task2.file 
