@@ -12,7 +12,7 @@ firewall-cmd --permanent --zone=public --add-service=rpc-bind
 firewall-cmd --reload
 ``` 
 
-[Скрипт](client.sh) для клиента создает директорию, куда будет монтирование, а также конфигурирует автомонтирование в */etc/fstab*
+[Скрипт](client.sh) для клиента создает директорию, куда будет монтирование, а также конфигурирует автомонтирование в */etc/fstab* NFSv3 по UDP
 ```bash
 192.168.11.101:/mnt/share /mnt/share nfs noauto,x-systemd.automount,proto=udp,nfsvers=3 0 0
 ```
