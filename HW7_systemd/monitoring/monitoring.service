@@ -1,0 +1,8 @@
+[Unit]
+Description="Monitoring for keyword"
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/monitoring
+ExecStart=/opt/monitoring.sh 
+
