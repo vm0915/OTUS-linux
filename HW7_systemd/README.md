@@ -2,7 +2,7 @@
 
 ## 1. Написать service
 Первое задание заключалось в написани скрипта, который мониторит файл на наличие ключевого слова и создания из него юнита systemd.
-Для этого был написан скрипт [monitoring.sh](monitoring/monitoring.sh) отслеживающий слово "yes" в [file](monitoring/file]
+Для этого был написан скрипт [monitoring.sh](monitoring/monitoring.sh) отслеживающий слово "yes" в [file](monitoring/file)
 В **/etc/systemd/system/** был размещен файл юнита [monitoring.service](monitoring/monitoring.service) и файл таймера [monitoring.timer](monitoring/monitoring.timer), запускающий сервис каждые 30 секунд.
 Точность таймера была увеличена до 1 секунды (вместо 30 сек по умолчанию).
 Подробное описание команд закомментированно в [скрипте](script.sh)
