@@ -1,0 +1,10 @@
+[Unit]
+Description=Find word every 30 seconds
+
+[Timer]
+OnBootSec=5
+OnUnitActiveSec=30
+AccuracySec=1us
+
+[Install]
+WantedBy=timers.target
