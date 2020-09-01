@@ -1,0 +1,9 @@
+[Unit]
+Description="Analyze log every 1 minute"
+
+[Timer]
+OnUnitActive=30
+AccuracySec=1us
+
+[Install]
+WantedBy=timers.target

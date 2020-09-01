@@ -65,6 +65,7 @@ NEWTIMESTAMP=$(cat $PARTLOG | tail -1 | cut --fields 1 --delimiter "]" | cut --f
 # добавить в письмо сведения о времени
 echo Временной диапазон:
 echo $LASTTIMESTAMP --- $NEWTIMESTAMP > $MAILTEXT
+
 # вывод Х ip-адресов с наибольшим количеством запросов
 echo "IP адреса с наибольшим количеством запросов:" >> $MAILTEXT
 cat $PARTLOG | cut --fields 1 --delimiter " " | sort | uniq -c | sort -k1 -n -r | head -$X >> $MAILTEXT
@@ -83,6 +84,7 @@ cat $PARTLOG  | cut --fields 3 --delimiter "\"" | cut --fields 2 --delimiter " "
 
 # печать письма
 cat $MAILTEXT
+echo $MAILTEXT | mail -s "Log analysis" root
 
 # записываем время последней проанализированной записи 
 echo $NEWTIMESTAMP > $TIMESTAMP
@@ -91,5 +93,5 @@ echo $NEWTIMESTAMP > $TIMESTAMP
     cleaning
 fi
 else
-  echo "предыдущий процесс еще не завершился"
+  echo "Предыдущий процесс еще не завершился"
 fi

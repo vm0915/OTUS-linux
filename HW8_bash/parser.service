@@ -1,0 +1,7 @@
+[Unit]
+Description="Log analysis"
+
+[Service]
+Type=simple
+ExecStart=/vagrant/parser.sh 4 3
+
