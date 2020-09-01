@@ -1,8 +1,8 @@
 [Unit]
-Description="Analyze log every 1 minute"
+Description="Analyze log every 30 seconds"
 
 [Timer]
-OnUnitActive=30
+OnUnitActiveSec=30
 AccuracySec=1us
 
 [Install]
