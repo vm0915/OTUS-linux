@@ -9,7 +9,7 @@ sudo chmod u+x /vagrant/loggrow.sh
 sudo cp /vagrant/parser.service /usr/lib/systemd/system
 sudo cp /vagrant/parser.timer /usr/lib/systemd/system
 
-sudo yum update && sudo yum -y install mailx
+sudo yum -y install mailx
 
 sudo /vagrant/loggrow.sh
 
