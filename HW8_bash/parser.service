@@ -3,5 +3,5 @@ Description="Log analysis"
 
 [Service]
 Type=simple
-ExecStart=/vagrant/parser.sh 4 3
+ExecStart=/bin/bash /vagrant/parser.sh 4 3
 
