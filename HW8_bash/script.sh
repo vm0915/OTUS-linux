@@ -11,7 +11,7 @@ sudo cp /vagrant/parser.timer /usr/lib/systemd/system
 
 sudo yum -y install mailx
 
-sudo /vagrant/loggrow.sh
+sudo /vagrant/loggrow.sh &
 
 sudo systemctl enable parser
 sudo systemctl start parser
