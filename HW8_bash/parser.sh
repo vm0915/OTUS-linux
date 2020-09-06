@@ -20,7 +20,7 @@ LOCKFILE=/run/parser.pid
 DIR=/var/lib/parser
 # файл с временем последней записи в прошлом анализе лога
 TIMESTAMP=/var/lib/parser/last.timestamp
-# 
+# Файл, в котором формируется письмо 
 MAILTEXT=/var/lib/parser/mail.text
 
 cleaning(){
@@ -63,8 +63,8 @@ fi
 NEWTIMESTAMP=$(cat $PARTLOG | tail -1 | cut --fields 1 --delimiter "]" | cut --fields 2 --delimiter "[")
 
 # добавить в письмо сведения о времени
-echo Временной диапазон:
-echo $LASTTIMESTAMP --- $NEWTIMESTAMP > $MAILTEXT
+echo "Временной диапазон:" > $MAILTEXT
+echo $LASTTIMESTAMP --- $NEWTIMESTAMP >> $MAILTEXT
 
 # вывод Х ip-адресов с наибольшим количеством запросов
 echo "IP адреса с наибольшим количеством запросов:" >> $MAILTEXT
@@ -82,9 +82,8 @@ cat $PARTLOG  | cut --fields 3 --delimiter "\"" | cut --fields 2 --delimiter " "
 echo "Все коды ответов:" >> $MAILTEXT
 cat $PARTLOG  | cut --fields 3 --delimiter "\"" | cut --fields 2 --delimiter " " | sort | uniq -c | sort -k1 -n -r >> $MAILTEXT
 
-# печать письма
-cat $MAILTEXT
-echo $MAILTEXT | mail -s "Log analysis" root
+# отправка письма
+mail -s "Log analysis" vagrant < $MAILTEXT
 
 # записываем время последней проанализированной записи 
 echo $NEWTIMESTAMP > $TIMESTAMP

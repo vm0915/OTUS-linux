@@ -13,7 +13,8 @@ sudo yum -y install mailx
 
 sudo /vagrant/loggrow.sh &
 
+sudo systemctl daemon-reload
 sudo systemctl enable parser
 sudo systemctl enable parser.timer
-sudo systemctl start parser
+sudo systemctl start parser.service
 
