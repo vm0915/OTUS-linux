@@ -2,7 +2,7 @@
 
 ## Создание своего RPM-пакета 
 
-RPM-пакет будем собирать из (исходников)[https://github.com/thedolphin/clogtail] предоставленных преподавателем.
+RPM-пакет будем собирать из [исходников](https://github.com/thedolphin/clogtail) предоставленных преподавателем.
 Необходимое ПО: `createrepo`, `rpmdevtools`.
 
 Инструкции для `rpmbuild` по сборке пакета содержит SPEC-файл.
