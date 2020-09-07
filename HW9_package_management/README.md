@@ -59,6 +59,7 @@ clean:
 ```
 `-D` - создает все родительские каталоги
 `-m0755` - устанавливает права rwxr-xr-x на устанавливаемый файл
+
 `${RPM_BUILD_ROOT}` - здесь ~/rpmbuild/BUILDROOT
 
 - В итеме `%clean` команды вычищают файлы, созданные на других стадиях
@@ -79,6 +80,7 @@ yum-builddep /vagrant/clogtail/clogtail.spec -y
 ```
 
 Соберем пакет командой `rpmbuild -bb`.
+
 `-bb` - Build a binary package (after doing the %prep, %build, and %install stages).
 
 ## Установка и настройка своего репозитория
