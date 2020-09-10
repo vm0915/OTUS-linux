@@ -2,11 +2,13 @@
 
 ## Создание своего RPM-пакета 
 
-RPM-пакет будем собирать из (исходников)[https://github.com/thedolphin/clogtail] предоставленных преподавателем.
+RPM-пакет будем собирать из [исходников](https://github.com/thedolphin/clogtail) предоставленных преподавателем.
+
 Необходимое ПО: `createrepo`, `rpmdevtools`.
 
 Инструкции для `rpmbuild` по сборке пакета содержит SPEC-файл.
 Он делится на *Preamble* и *Body*.
+
 В нашем примере *Preamble* содержит имя, версию, необходимое для билда ПО и др.:
 ```bash
 Name:           clogtail
@@ -18,13 +20,14 @@ License:        BSD
 BuildRequires:  git gcc
 ```
 В *Body* содержатся следующие *items*:
-Описание:
+
+- Описание:
 ```bash
 %description
 Log follower for periodic jobs
 ```
 
-Подготовка содежит встроенный макрос `%setup`, который распаковывает исходные тексты и делает в директорию исходных текстов `cd`. В нашем примере исходные тексты скачиваются с github:
+- Подготовка содежит встроенный макрос `%setup`, который распаковывает исходные тексты и делает в директорию исходных текстов `cd`. В нашем примере исходные тексты скачиваются с github:
 ```bash
 %prep
 %setup -c -T
@@ -32,13 +35,13 @@ curl -fL https://api.github.com/repos/thedolphin/clogtail/tarball/master |
 tar -xzvf - --strip 1
 ```
 
-В итеме `%build` вызывается команда make, которая в свою очередь читает Makefile: 
+- В итеме `%build` вызывается команда `make`, которая в свою очередь читает **Makefile**: 
 ```bash
 %build
 make
 ```
 
-Makefile:
+**Makefile**:
 ```bash
 all: clogtail
 
@@ -49,22 +52,23 @@ clean:
 	rm -f clogtail
 ```
 
-В итеме `%install` содержится макрос `%{__install}` (значение которого можно узнать в /usr/lib/rpm/macros). Здесь он только вызывает /usr/bin/install:
+- В итеме `%install` содержится макрос `%{__install}` (значение которого можно узнать в /usr/lib/rpm/macros). Здесь он только вызывает /usr/bin/install:
 ```bash
 %install
 %{__install} -D -m0755 clogtail ${RPM_BUILD_ROOT}/usr/bin/clogtail
 ```
 `-D` - создает все родительские каталоги
 `-m0755` - устанавливает права rwxr-xr-x на устанавливаемый файл
+
 `${RPM_BUILD_ROOT}` - здесь ~/rpmbuild/BUILDROOT
 
-В итеме `%clean` команды вычищают файлы, созданные на других стадиях
+- В итеме `%clean` команды вычищают файлы, созданные на других стадиях
 ```bash
 %clean
 rm -rf $RPM_BUILD_ROOT
 ```
 
-В итеме `%files` задают списки файлов и каталогов, которые с соответствующими атрибутами должны быть скопированы из дерева сборки в rpm-пакет и затем будут копироваться в целевую систему при установке этого пакета:
+- В итеме `%files` задают списки файлов и каталогов, которые с соответствующими атрибутами должны быть скопированы из дерева сборки в rpm-пакет и затем будут копироваться в целевую систему при установке этого пакета:
 ```bash
 %files
 /usr/bin/clogtail
@@ -76,6 +80,7 @@ yum-builddep /vagrant/clogtail/clogtail.spec -y
 ```
 
 Соберем пакет командой `rpmbuild -bb`.
+
 `-bb` - Build a binary package (after doing the %prep, %build, and %install stages).
 
 ## Установка и настройка своего репозитория
