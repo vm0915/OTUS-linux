@@ -1,0 +1,4 @@
+---
+# vars file for deploy_nginx
+ansible_user      : vagrant
+nginx_config_path : /etc/nginx

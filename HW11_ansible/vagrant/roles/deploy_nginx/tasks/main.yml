@@ -1,0 +1,18 @@
+---
+# tasks file for deploy_nginx
+- name: Install epel-release
+  yum: name=epel-release state=latest
+
+- name: Install Nginx Web Server
+  yum: name=nginx state=latest
+  notify:
+    - Start Nginx
+
+- name: Copy config file
+  template: src=nginx.j2 dest={{ nginx_config_path }}/nginx.conf mode=0644
+  notify:
+    - Reload Nginx
+
+- name: Enable Nginx
+  service: name=nginx enabled=yes
+
