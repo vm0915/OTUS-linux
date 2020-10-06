@@ -1,0 +1,59 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+home = ENV['HOME']
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+MACHINES = {
+    :machine1 => {
+        :box_name => "centos/7",
+        :ip_addr => '192.168.11.101',
+        #:path => 'server.sh'
+    },
+    :machine2 => {
+        :box_name => "centos/7",
+        :ip_addr => '192.168.11.102',
+        #:path => 'client.sh'
+    }, 
+    :ansible => {
+        :box_name => "centos/7",
+        :ip_addr => '192.168.11.100',
+        #:path => 'server.sh'
+    },
+}
+
+Vagrant.configure("2") do |config|
+        config.vm.synced_folder ".", "/vagrant", disabled: true
+    MACHINES.each do |boxname, boxconfig|
+        config.vm.define boxname do |box|
+            box.vm.box = boxconfig[:box_name]
+            box.vm.host_name = boxname.to_s  
+            box.vm.network "private_network", ip: boxconfig[:ip_addr]  
+            box.vm.provider :virtualbox do |vb|
+                vb.customize ["modifyvm", :id, "--memory", "512"]
+                needsController = false
+            end
+            box.vm.provision "shell", inline: <<-SHELL
+            	mkdir -p ~root/.ssh
+            	cp ~vagrant/.ssh/auth* ~root/.ssh
+          SHELL
+            if  boxname.to_s.eql? "ansible"
+	    box.vm.synced_folder "vagrant", "/vagrant", type: "rsync"
+            box.vm.provider :virtualbox do |vb|
+                vb.customize ["modifyvm", :id, "--memory", "3072"] 
+	    end
+	    box.vm.provision "file", source: ".vagrant/machines/machine1/virtualbox/private_key", destination: "/vagrant/mkey1"
+	    box.vm.provision "file", source: ".vagrant/machines/machine2/virtualbox/private_key", destination: "/vagrant/mkey2"
+	    box.vm.provision "shell", inline: <<-SHELL
+            	sudo yum install -y epel-release
+		sudo yum install -y ansible
+		cd /vagrant
+		ansible-playbook playbook1.yml
+		ansible-playbook playbook2.yml
+		curl -I 192.168.11.101:8080
+		curl -I 192.168.11.102:80
+		SHELL
+            end
+	    #box.vm.provision "shell", path: boxconfig[:path]
+        end
+    end
+end
