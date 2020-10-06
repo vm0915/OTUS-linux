@@ -3,39 +3,5 @@
   hosts: staging_servers
   become: yes
 
-  vars:
-    source_folder: /home/vagrant
-    nginx_config_path: /etc/nginx
-
-  tasks:
-  - name: Install epel-release
-    yum: name=epel-release state=latest
-
-  - name: Install Nginx Web Server
-    yum: name=nginx state=latest
-    notify:
-      - Start Nginx
-
-  - name: Copy config file
-    template: src={{ source_folder }}/nginx.j2 dest={{ nginx_config_path }}/nginx.conf mode=0644
-    notify:
-      - Restart Nginx 
-  
-  - name: Open port in firewall
-    firewalld: 
-      offline: no
-      zone: public
-      permanent: yes
-      port: "{{ nginx_port }}/tcp"
-      state: enabled
-      immediate: yes
-      
-  - name: Enable Nginx
-    service: name=nginx enabled=yes
-  
-  handlers:
-  - name: Restart Nginx
-    service: name=nginx state=restarted 
-  
-  - name: Start Nginx
-    service: name=nginx state=started 
+  roles:
+    - deploy_nginx
