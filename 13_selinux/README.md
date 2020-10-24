@@ -60,4 +60,80 @@ semanage port -a -t http_port_t -p tcp 5500
 
 `-p` - Protocol for the specified port (tcp|udp) or internet protocol version  for  the  specified  node (ipv4|ipv6)
 
+## 2. Обеспечить работоспособность приложения
+Развернем [стенд](selinux_dns_problems) и проверим работу после `setenforce 0` на сервере:
+```bash
+[vagrant@client ~]$ nsupdate -k /etc/named.zonetransfer.key
+> server 192.168.50.10
+> zone ddns.lab
+> update add www.ddns.lab. 60 A 192.168.50.15
+> send
+> quit
+```
+Здесь все проходит без ошибок, но по какой-то причине `dig @192.168.50.10 www.ddns.lab` все равно не возвращает адрес:
+```bash
+[vagrant@client ~]$ dig @192.168.50.10 www.dns.lab
+...
+;; QUESTION SECTION:
+;www.dns.lab.                   IN      A
+...
+```
+Но это решается после изменения политик SELinux.
+
+Возвращаем `setenforce 1`, снова пытаемся сделать запись с client и смотрим логи `named.service`:
+```bash
+[root@ns01 vagrant]# journalctl -xe -u named
+...
+Oct 24 10:06:16 ns01 named[5005]: /etc/named/dynamic/named.ddns.lab.view1.jnl: open: permission denied
+...
+```
+Запускаем `sealert -a /var/log/audit/audit.log`, где узнаем причину:
+```bash
+SELinux is preventing /usr/sbin/named from write access on the file named.ddns.lab.view1.jnl.
+```
+ Читаем про типы SELinux для named [здесь](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/selinux_users_and_administrators_guide/index#sect-Managing_Confined_Services-BIND-Types), узнаем контекст безопасности файла:
+ ```bash
+ [root@ns01 vagrant]# ls -Z /etc/named/dynamic/named.ddns.lab.view1.jnl
+-rw-r--r--. named named system_u:object_r:etc_t:s0       /etc/named/dynamic/named.ddns.lab.view1.jnl
+```
+и приходим к следующим возможным решениям проблемы:
+1. создать разрешающий модуль с помощью `ausearch -c 'isc-worker0000' --raw | audit2allow -M my-iscworker0000` и установить его. 
+Модуль будет иметь следующее содержание:
+```bash
+[root@ns01 vagrant]# cat my-iscworker0000.te
+
+module my-iscworker0000 1.0;
+
+require {
+        type etc_t;
+        type named_t;
+        class file { create write };
+}
+
+#============= named_t ==============
+
+#!!!! WARNING: 'etc_t' is a base type.
+allow named_t etc_t:file { create write };
+```
+что позволит файлам с меткой `named_t` слишком многое
+
+2. Изменить контекст безопасности для папок и подпапок `/etc/named/`. Это много работы.
+
+3. Переметить файлы в зон в стандартные директории, где они при копировании получат стандартные метки, изменить их владельца. Поправить конфиги, которые ссылались на старые пути и перезапустить демона.
+Найти конфиги можно с помощью `grep -R /etc/named /etc`
+```bash
+[root@ns01 vagrant]# cp -R /etc/named /var/
+[root@ns01 vagrant]# chown named:named -R /var/named
+[root@ns01 vagrant]# sed -i.bk 's+/etc/named/+/var/named/+g' /etc/named.conf
+[root@ns01 vagrant]# systemctl daemon-reload
+[root@ns01 vagrant]# systemctl restart named
+```
+Исполняем третий вариант и сервер выдает корректный ответ:
+```bash
+[vagrant@client ~]$ dig @192.168.50.10 www.ddns.lab
+...
+;; ANSWER SECTION:
+www.ddns.lab.           60      IN      A       192.168.50.15
+...
+```
 
