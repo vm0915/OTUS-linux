@@ -70,15 +70,6 @@ semanage port -a -t http_port_t -p tcp 5500
 > send
 > quit
 ```
-Здесь все проходит без ошибок, но по какой-то причине `dig @192.168.50.10 www.ddns.lab` все равно не возвращает адрес:
-```bash
-[vagrant@client ~]$ dig @192.168.50.10 www.dns.lab
-...
-;; QUESTION SECTION:
-;www.dns.lab.                   IN      A
-...
-```
-Но это решается после изменения политик SELinux.
 
 Возвращаем `setenforce 1`, снова пытаемся сделать запись с client и смотрим логи `named.service`:
 ```bash
