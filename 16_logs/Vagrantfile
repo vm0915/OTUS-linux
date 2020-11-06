@@ -7,13 +7,13 @@ MACHINES = {
     :log => {
         :box_name => "centos/7",
         :ip_addr => '192.168.11.101',
-        :path => 'scripts/log_vm.sh',
+        :path => 'scripts/log.sh',
 	:rsync => 'log'
     },
     :web => {
         :box_name => "centos/7",
         :ip_addr => '192.168.11.102',
-        :path => 'scripts/web_vm.sh'
+        :path => 'scripts/web.sh',
 	:rsync => 'web'
     }, 
 }
@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
             	mkdir -p ~root/.ssh
             	cp ~vagrant/.ssh/auth* ~root/.ssh
           SHELL
-#            box.vm.provision "shell", path: boxconfig[:path]
+            box.vm.provision "shell", path: boxconfig[:path]
         end
     end
 end
