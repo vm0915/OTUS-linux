@@ -5,7 +5,7 @@
 
 MACHINES = {
 :inetRouter => {
-        :box_name => "centos/6",
+        :box_name => "centos/7",
         #:public => {:ip => '10.10.10.1', :adapter => 1},
         :net => [
                    {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
@@ -33,12 +33,11 @@ MACHINES = {
   :office1Router => {
 	:box_name => "centos/7",
 	:net => [
-		   {ip: '192.168.3.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "between-office-commute"},
+  		   {ip: '192.168.3.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "office1-central-commute"},
 		   {ip: '192.168.2.1', adapter: 3, netmask: "255.255.255.192", virtualbox__intnet: "dev1"},
 		   {ip: '192.168.2.65', adapter: 4, netmask: "255.255.255..192", virtualbox__intnet: "test-servers1"},
 		   {ip: '192.168.2.129', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "managers"},
 		   {ip: '192.168.2.193', adapter: 6, netmask: "255.255.255.192", virtualbox__intnet: "office-hardware1"},
-  		   {ip: '192.168.3.2', adapter: 7, netmask: "255.255.255.0", virtualbox__intnet: "office1-central-commute"},
 		]
   },
   :office1Server => {
@@ -52,11 +51,10 @@ MACHINES = {
   :office2Router => {
 	:box_name => "centos/7",
 	:net => [
-		   {ip: '192.168.3.3', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "between-office-commute"},
+		   {ip: '192.168.4.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "office2-central-commute"},
 		   {ip: '192.168.1.1', adapter: 3, netmask: "255.255.255.128", virtualbox__intnet: "dev2"},
 		   {ip: '192.168.1.129', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "test-servers2"},
 		   {ip: '192.168.1.193', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "office-hardware2"},
-		   {ip: '192.168.4.2', adapter: 6, netmask: "255.255.255.0", virtualbox__intnet: "office2-central-commute"},
 		]
   },
   :office2Server => {
@@ -97,10 +95,12 @@ Vagrant.configure("2") do |config|
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
             iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+	    ip route add 192.168.0.0/16 via 192.168.255.1
             SHELL
         when "centralRouter"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
+            echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
             ip route add 192.168.2.0/24 via 192.168.3.1
             ip route add 192.168.1.0/24 via 192.168.4.1
@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
 	    ip route add 192.168.0.0/28 via 192.168.0.1
 	    systemctl restart network
 	    ip route delete default
-	    ip route add default via 192.168.255.2
+	    ip route add default via 192.168.255.1
             SHELL
         when "centralServer"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
@@ -120,6 +120,7 @@ Vagrant.configure("2") do |config|
         when "office1Router"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
+            echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
             ip route add 192.168.2.0/26 via 192.168.2.1
 	    ip route add 192.168.2.64/26 via 192.168.2.65
@@ -127,7 +128,7 @@ Vagrant.configure("2") do |config|
             ip route add 192.168.2.192/26 via 192.168.2.193
 	    systemctl restart network
             ip route delete default
-	    ip route add default via 192.168.3.2
+	    ip route add default via 192.168.3.1
 	    SHELL
 	when "office1Server"
 	  box.vm.provision "shell", run: "always", inline: <<-SHELL
@@ -137,13 +138,14 @@ Vagrant.configure("2") do |config|
             SHELL
   	when "office2Router"
 	  box.vm.provision "shell", run: "always", inline: <<-SHELL
+            echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
 	    echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
             ip route add 192.168.1.0/25 via 192.168.1.1
             ip route add 192.168.1.128/26 via 192.168.1.129
             ip route add 192.168.1.192/26 via 192.168.1.193
 	    systemctl restart network
             ip route delete default
-            ip route add default via 192.168.3.2
+            ip route add default via 192.168.4.1
 	    SHELL
   	when "office2Server"
 	  box.vm.provision "shell", run: "always", inline: <<-SHELL
