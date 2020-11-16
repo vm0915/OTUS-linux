@@ -99,16 +99,24 @@ Vagrant.configure("2") do |config|
             SHELL
         when "centralRouter"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
-            sysctl net.ipv4.conf.all.forwarding=1
+            echo sysctl net.ipv4.conf.all.forwarding=1
+	    sysctl net.ipv4.conf.all.forwarding=1
             echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
-            ip route add 192.168.2.0/24 via 192.168.3.2
-            ip route add 192.168.1.0/24 via 192.168.4.2
-            ip route add 192.168.0.64/26 via 192.168.0.65
-	    ip route add 192.168.0.32/28 via 192.168.0.33
-	    ip route add 192.168.0.0/28 via 192.168.0.1
 	    systemctl restart network
+	    echo ip route add 192.168.2.0/24 via 192.168.3.2
+            ip route add 192.168.2.0/24 via 192.168.3.2
+	    echo ip route add 192.168.1.0/24 via 192.168.4.2
+            ip route add 192.168.1.0/24 via 192.168.4.2
+	    echo ip route add 192.168.0.64/26 via 192.168.0.65
+            ip route add 192.168.0.64/26 via 192.168.0.65
+	    echo ip route add 192.168.0.32/28 via 192.168.0.33
+	    ip route add 192.168.0.32/28 via 192.168.0.33
+	    echo ip route add 192.168.0.0/28 via 192.168.0.1
+	    ip route add 192.168.0.0/28 via 192.168.0.1
+	    echo ip route delete default
 	    ip route delete default
+	    echo ip route add default via 192.168.255.1
 	    ip route add default via 192.168.255.1
             SHELL
         when "centralServer"
@@ -125,11 +133,11 @@ Vagrant.configure("2") do |config|
             sysctl net.ipv4.conf.all.forwarding=1
             echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+	    systemctl restart network
             ip route add 192.168.2.0/26 via 192.168.2.1
 	    ip route add 192.168.2.64/26 via 192.168.2.65
             ip route add 192.168.2.128/26 via 192.168.2.129
             ip route add 192.168.2.192/26 via 192.168.2.193
-	    systemctl restart network
             ip route delete default
 	    ip route add default via 192.168.3.1
 	    SHELL
@@ -146,10 +154,10 @@ Vagrant.configure("2") do |config|
 	  box.vm.provision "shell", run: "always", inline: <<-SHELL
             echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/10-net.conf
 	    echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	    systemctl restart network
             ip route add 192.168.1.0/25 via 192.168.1.1
             ip route add 192.168.1.128/26 via 192.168.1.129
             ip route add 192.168.1.192/26 via 192.168.1.193
-	    systemctl restart network
             ip route delete default
 	    echo ip route add default via 192.168.4.1
             ip route add default via 192.168.4.1
