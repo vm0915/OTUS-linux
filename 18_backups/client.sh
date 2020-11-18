@@ -6,12 +6,16 @@ yum install -y epel-release &&
 yum install -y borgbackup
 
 # copy keys 
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/id_rsa1
 
-ssh -o "StrictHostKeyChecking=no" root@192.168.11.10
+chmod 600 /vagrant/private_key
+chown root /vagrant/script.sh
+chmod 700 /vagrant/script.sh
 
-BORG_RSH
-BORG_PASSPHRASE="otus" BORG_RSH="ssh -i /home/vagrant/.ssh/id_rsa1" borg create -v --stats root@192.168.11.10:/var/backup::'{now:%Y-%m-%d-%H-%M}' /etc
+
+sudo BORG_PASSPHRASE="otus" \
+BORG_RSH="ssh -o 'StrictHostKeyChecking=no' -i /vagrant/private_key" \
+borg create -v --stats root@192.168.11.10:/var/backup::'{now:%Y-%m-%d-%H-%M}' /etc \
+2>&1 | logger &
 
 # create cron
+sudo echo "*/5 * * * * root /vagrant/script.sh" > /etc/cron.d/borg-backup 
