@@ -1,10 +1,16 @@
 #!/bin/bash
+sudo yum install -y epel-release
+sudo yum install -y borgbackup
 
-# init borg repo
-borg init --encryption=repokey /var/backup
+sudo mkdir /var/backup
 
 # create fs and mount
-mkfs.xfs /dev/sdb
-mount /var/backup
+sudo mkfs.xfs /dev/sdb
+sudo mount /dev/sdb /var/backup
+
+# init borg repo
+sudo BORG_PASSPHRASE="otus" borg init --encryption=repokey /var/backup
+
+
 
 
