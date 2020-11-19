@@ -9,6 +9,7 @@ yum install -y borgbackup
 
 chmod 600 /home/vagrant/private_key
 chown root /home/vagrant/script.sh
+chown root /home/vagrant/private_key
 chmod 700 /home/vagrant/script.sh
 
 
