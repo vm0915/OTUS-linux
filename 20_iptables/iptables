@@ -1,0 +1,30 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:SSH-INPUT - [0:0]
+:SSH-INPUTTWO - [0:0]
+:TRAFFIC - [0:0]
+-A INPUT -j TRAFFIC
+-A SSH-INPUT -m recent --set --name SSH1 --mask 255.255.255.255 --rsource -j DROP
+-A SSH-INPUTTWO -m recent --set --name SSH2 --mask 255.255.255.255 --rsource -j DROP
+-A TRAFFIC -p icmp -m icmp --icmp-type any -j ACCEPT
+-A TRAFFIC -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A TRAFFIC -p tcp -m state --state NEW -m tcp --dport 22 -m recent --rcheck --seconds 30 --name SSH2 --mask 255.255.255.255 --rsource -j ACCEPT
+-A TRAFFIC -p tcp -m state --state NEW -m tcp -m recent --remove --name SSH2 --mask 255.255.255.255 --rsource -j DROP
+-A TRAFFIC -p tcp -m state --state NEW -m tcp --dport 7652 -m recent --rcheck --name SSH1 --mask 255.255.255.255 --rsource -j SSH-INPUTTWO
+-A TRAFFIC -p tcp -m state --state NEW -m tcp -m recent --remove --name SSH1 --mask 255.255.255.255 --rsource -j DROP
+-A TRAFFIC -p tcp -m state --state NEW -m tcp --dport 9845 -m recent --rcheck --name SSH0 --mask 255.255.255.255 --rsource -j SSH-INPUT
+-A TRAFFIC -p tcp -m state --state NEW -m tcp -m recent --remove --name SSH0 --mask 255.255.255.255 --rsource -j DROP
+-A TRAFFIC -p tcp -m state --state NEW -m tcp --dport 5160 -m recent --set --name SSH0 --mask 255.255.255.255 --rsource -j DROP
+-A TRAFFIC -j DROP
+COMMIT
+
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+COMMIT
+
