@@ -61,27 +61,28 @@ Vagrant.configure("2") do |config|
         
         case boxname.to_s
         when "inetRouter"
+	  box.vm.synced_folder ".", "/vagrant", type: "rsync"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
             iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
 	    ip route add 192.168.0.0/16 via 192.168.255.2
-# скопировать таблицу /etc/sysconfig/iptables
-# install iptables iptables-services
-# daemon-reload
-# restart
-# copy knock on centralRouter
+	    cp /vagrant/iptables /etc/sysconfig/iptables
+	    iptables-restore < /etc/sysconfig/iptables
+            yum install -y iptables iptables-services
+	    systemctl daemon-reload
+	    systemctl restart iptables
             SHELL
         when "inetRouter2"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
-        #    ip route add 192.168.0.0/16 via 192.168.255.2
             ip route delete default
 	    ip route add default via 192.168.10.10
 	    ip route add 192.168.0.0/16 via 192.168.254.2
-	    iptables -t nat -A PREROUTING -i eth2 -p tcp --dport 8080 -j DNAT --to 192.168.0.2
+	    iptables -t nat -A PREROUTING -i eth2 -p tcp --dport 8080 -j DNAT --to 192.168.0.2:80
 	    iptables -t nat -A POSTROUTING  -p tcp --dst 192.168.0.2 --dport 80 -j SNAT --to-source 192.168.254.1
 	    SHELL
 	when "centralRouter"
+          box.vm.synced_folder ".", "/vagrant", type: "rsync"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             echo sysctl net.ipv4.conf.all.forwarding=1
 	    sysctl net.ipv4.conf.all.forwarding=1
@@ -91,6 +92,9 @@ Vagrant.configure("2") do |config|
 	    ip route add 192.168.0.0/28 via 192.168.0.1
 	    ip route delete default
 	    ip route add default via 192.168.255.1
+	    yum install -y nmap
+	    chmod u+x /vagrant/knock.sh
+	    # sudo /vagrant/knock.sh 192.168.255.1 5160 9845 7652
             SHELL
         when "centralServer"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
