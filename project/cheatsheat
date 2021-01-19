@@ -1,0 +1,58 @@
+Project
+
+1. Wordpress installation
+
+sudo su
+yum install -y wget
+wget http://wordpress.org/latest.tar.gz
+
+tar -xzvf latest.tar.gz
+
+===Config mysqlserver===
+
+cd wordpress/
+cp wp-config-sample.php wp-config.php
+
+yum install -y epel-release
+yum install -y nginx
+systemctl enable --now nginx
+
+copy wordpress /usr/share/nginx/html
+
+yum isntall -y php-fpm
+systemctl enable --now php-fpm.service
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+===nginx.conf===
+
+server {
+    . . .
+    location / {
+        #try_files $uri $uri/ =404;
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+    . . .
+}
+
+
+
+
+2. MySQL installation
+
+yum install -y mariadb-server
+sudo systemctl enable --now mariadb
+sudo systemctl status mariadb
+
+sudo mysql_secure_installation
+
+check if installation is ok:
+mysqladmin -u root -p version 
+
+mysql -u root -p
+CREATE DATABASE wordpress;
+GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"192.168.30.2" IDENTIFIED BY "wordpress";
+FLUSH PRIVILEGES;
+EXIT
