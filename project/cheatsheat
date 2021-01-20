@@ -28,16 +28,88 @@ sudo systemctl reload nginx
 
 ===nginx.conf===
 
-server {
-    . . .
-    location / {
-        #try_files $uri $uri/ =404;
-        try_files $uri $uri/ /index.php$is_args$args;
-    }
-    . . .
+worker_processes  1;
+events {
+    worker_connections  1024;
 }
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+server {
+  listen 80;
+  server_name _;
+  root /usr/share/nginx/html;
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+  index index.php index.html;
+  location / {
+    # This is cool because no php is touched for static content.
+    try_files $uri $uri/ /index.php;
+  }
+  location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
+    expires max;
+  }
+  location ~* \.php$ {
+    try_files $uri =404
+    fastcgi_intercept_errors on;
+    fastcgi_index   index.php;
+    fastcgi_pass    127.0.0.1:9000;
+    include fastcgi_params;
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+  }
+  location ~ /\.(ht|ssh) {
+    deny  all;
+  }
+  location /status {
+    include fastcgi_params;
+    fastcgi_pass    127.0.0.1:9000;
+  }
+}
+}
+                        
+=====================================
+
+sudo yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum install yum-utils
+sudo yum-config-manager --disable remi-php54
+sudo yum-config-manager --enable remi-php73
+yum update php-fpm
+
+yum install php-mysql
 
 
+===Create certificate===
+mkdir /etc/ssl/private
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+===edit nginx config===
+listen 443 ssl default_server;
+        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+
+
+===/etc/php-fpm.d/www.conf===
+[www]
+listen = /var/run/php-fpm/php-fpm.sock
+listen.allowed_clients = 127.0.0.1
+listen.owner = nginx
+listen.group = nginx
+listen.mode = 0666
+user = nginx
+group = nginx
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 5
+pm.min_spare_servers = 5
+pm.max_spare_servers = 35
+slowlog = /var/log/php-fpm/www-slow.log
+php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+php_admin_flag[log_errors] = on
+php_value[session.save_handler] = files
+php_value[session.save_path] = /var/lib/php/session
 
 
 2. MySQL installation
@@ -56,3 +128,92 @@ CREATE DATABASE wordpress;
 GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"192.168.30.2" IDENTIFIED BY "wordpress";
 FLUSH PRIVILEGES;
 EXIT
+
+
+
+3. another nginx config
+
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+
+
+server {
+
+  # Replace this port with the right one for your requirements
+  listen 80;
+  # Multiple hostnames separated by spaces.  Replace these as well.
+  server_name _;
+
+  root /usr/share/nginx/html;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  index index.php index.html;
+
+  location / {
+    # This is cool because no php is touched for static content.
+    try_files $uri $uri/ /index.php;
+  }
+
+  location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
+    expires max;
+  }
+
+  location ~* \.php$ {
+    try_files $uri =404
+
+    fastcgi_intercept_errors on;
+
+    fastcgi_index   index.php;
+    fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+
+    include fastcgi_params;
+
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+  }
+
+  location ~ /\.(ht|ssh) {
+    deny  all;
+  }
+
+  location /status {
+    include fastcgi_params;
+                   fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+  }
+
+
+}
+}
+
