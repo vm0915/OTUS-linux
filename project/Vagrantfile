@@ -9,8 +9,8 @@ MACHINES = {
         #:public => {:ip => '10.10.10.1', :adapter => 1},
         :net => [
                    {ip: '192.168.10.10', adapter: 2, netmask: "255.255.255.0"},
-                   {ip: '192.168.20.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "dmz"},
-                   {ip: '192.168.30.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
+                   {ip: '192.168.20.1', adapter: 3, netmask: "255.255.255.0", virtualbox__intnet: "dmz"},
+                   {ip: '192.168.30.1', adapter: 4, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
 
                 ]
   },
@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
         SHELL
         
         case boxname.to_s
-        when "inetRouter"
+        when "inetRouter1"
 	  box.vm.synced_folder ".", "/vagrant", type: "rsync"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             sysctl net.ipv4.conf.all.forwarding=1
@@ -121,5 +121,9 @@ Vagrant.configure("2") do |config|
             SHELL
 	end
       end
+  end
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "playbook.yml"
+    ansible.verbose = "vv"
   end
 end

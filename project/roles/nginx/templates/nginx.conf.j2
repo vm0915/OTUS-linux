@@ -1,0 +1,89 @@
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+
+
+server {
+
+  # Replace this port with the right one for your requirements
+  listen 80;
+
+  listen 443 ssl default_server;
+        ssl_certificate {{ cert_path }};
+        ssl_certificate_key {{ key_path }};
+
+  # Multiple hostnames separated by spaces.  Replace these as well.
+  server_name _;
+
+  root /usr/share/nginx/html;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  index index.php index.html;
+
+  location / {
+    # This is cool because no php is touched for static content.
+    try_files $uri $uri/ /index.php;
+  }
+
+  location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
+    expires max;
+  }
+
+  location ~* \.php$ {
+    try_files $uri =404
+
+    fastcgi_intercept_errors on;
+
+    fastcgi_index   index.php;
+    fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+
+    include fastcgi_params;
+
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+  }
+
+  location ~ /\.(ht|ssh) {
+    deny  all;
+  }
+
+  location /status {
+    include fastcgi_params;
+    fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+  }
+
+
+}
+}
+
