@@ -17,9 +17,3 @@
    notify:
      - create self-signed certificate
      - restart nginx
-
-
- - name: trigger nginx-restart
-   command: /bin/true
-   notify: 
-     - create self-signed certificate

@@ -7,3 +7,13 @@
 
    roles:
      - nginx
+
+
+ - name: Install MySQL
+   hosts: mysqlServer
+   remote_user: vagrant
+   become: yes
+
+
+   roles:
+     - mysql

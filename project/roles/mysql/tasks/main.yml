@@ -1,0 +1,12 @@
+---
+ - name: Install MySQL
+   yum: 
+     name: mariadb-5.5.68-1.el7 
+     state: present
+
+
+ - name: Start MySQL Service
+   ansible.builtin.systemd:
+     state: started 
+     enabled: yes
+     name: mariadb
