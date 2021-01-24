@@ -1,4 +1,10 @@
 ---
+ - name: create self-signed certificate
+   command: >
+        openssl req -x509 -nodes -subj '/' -days 365
+        -newkey rsa:2048 -sha256 -keyout {{ key_path }} -out {{ cert_path }}
+ 
+ 
  - name: restart nginx
    ansible.builtin.systemd:
      state: restarted
@@ -6,7 +12,8 @@
      name: nginx
 
 
- - name: create self-signed certificate
-   command: >
-        openssl req -x509 -nodes -subj '/' -days 365
-        -newkey rsa:2048 -sha256 -keyout {{ key_path }} -out {{ cert_path }}
+ - name: start nginx
+   systemd:
+     state: started
+     enabled: yes
+     name: nginx

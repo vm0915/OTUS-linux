@@ -1,2 +1,2 @@
-key_path: /etc/ssl/private/nginx-selfsigned.key
-cert_path: /etc/ssl/certs/nginx-selfsigned.crt
+key_path: /etc/pki/tls/private/nginx-selfsigned.key
+cert_path: /etc/pki/tls/certs/nginx-selfsigned.crt

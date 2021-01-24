@@ -1,0 +1,7 @@
+---
+wp_db_server_ip: 192.168.30.3
+wp_server_ip: 192.168.30.2
+wp_db_name: wordpress
+wp_db_user: wordpress
+wp_db_password: secret
+phpfpm_unix_socket: /var/opt/remi/php74/run/php-fpm/php-fpm.sock

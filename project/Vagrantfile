@@ -39,12 +39,12 @@ MACHINES = {
                    {ip: '192.168.30.4', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
                 ]
   },
-  :nginxServer => {
-        :box_name => "centos/7",
-        :net => [
-                   {ip: '192.168.20.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "dmz"},
-                ]
-  },
+#  :nginxServer => {
+#        :box_name => "centos/7",
+#        :net => [
+#                   {ip: '192.168.20.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "dmz"},
+#                ]
+#  },
 }
 
 

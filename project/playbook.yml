@@ -1,5 +1,5 @@
 ---
- - name: Install nginx
+ - name: Install web-server
    hosts: wordpressServer
    remote_user: vagrant
    become: yes
@@ -7,6 +7,8 @@
 
    roles:
      - nginx
+     - wordpress
+     - php-fpm
 
 
  - name: Install MySQL

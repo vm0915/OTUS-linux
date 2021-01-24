@@ -66,7 +66,7 @@ server {
     fastcgi_intercept_errors on;
 
     fastcgi_index   index.php;
-    fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+    fastcgi_pass    unix:{{ phpfpm_unix_socket }};
 
     include fastcgi_params;
 
@@ -80,7 +80,7 @@ server {
 
   location /status {
     include fastcgi_params;
-    fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+    fastcgi_pass    unix:{{ phpfpm_unix_socket }};
   }
 
 

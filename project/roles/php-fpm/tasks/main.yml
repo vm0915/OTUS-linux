@@ -1,0 +1,28 @@
+---
+ - name: Copy REMI repo
+   copy: 
+     src: remi.repo
+     dest: /etc/yum.repos.d/
+
+
+ - name: Create the GPG key for REMI
+   copy: 
+     src: RPM-GPG-KEY-remi
+     dest: /etc/pki/rpm-gpg
+
+
+ - name: Install php-fpm
+   yum: 
+     name: ['php74-php-fpm-7.4.14-1.el7.remi', 'php74-php-pecl-mysql-1.0.0-0.23.20190415.d7643af.el7.remi']  
+     state: present
+
+
+ - name: Disable default pool
+   command: mv /etc/opt/remi/php74/php-fpm.d/www.conf /etc/opt/remi/php74/php-fpm.d/www.disabled creates=/etc/opt/remi/php74/php-fpm.d/www.disabled
+   notify: restart php-fpm
+
+ - name: Copy php-fpm configuration
+   template: 
+     src: wordpress.conf 
+     dest: /etc/opt/remi/php74/php-fpm.d/
+   notify: restart php-fpm
