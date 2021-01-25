@@ -1,0 +1,25 @@
+---
+ - name: Copy iptables-save
+   copy:
+     src: iptables
+     dest: /etc/sysconfig/iptables
+
+
+# - name: Restore iptables
+#   community.general.iptables_state:
+#     state: restored
+#     path: /etc/sysconfig/iptables
+#   async: 30
+#   poll: 0
+#   notify: 
+#     - restart iptables
+ - name: Restore iptables
+   shell: iptables-restore -w 3 < /etc/sysconfig/iptables 
+
+
+ - ansible.posix.sysctl:
+     name: net.ipv4.ip_forward
+     value: '1'
+     sysctl_set: yes
+     state: present
+     reload: yes

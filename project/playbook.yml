@@ -6,9 +6,9 @@
 
 
    roles:
+     - php-fpm
      - nginx
      - wordpress
-     - php-fpm
 
 
  - name: Install MySQL
@@ -19,3 +19,13 @@
 
    roles:
      - mysql
+
+
+ - name: Configure router
+   hosts: inetRouter
+   remote_user: vagrant
+   become: yes
+  
+
+   roles:
+     - router

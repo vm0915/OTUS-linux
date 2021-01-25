@@ -5,3 +5,40 @@
      dest: /usr/share/nginx/html
      remote_src: yes
      extra_opts: [--strip-components=1]
+
+ - name: Copy WordPress config file
+   template: src=wp-config.php dest={{ wp_home_dir }}
+
+ - name: install SEManage
+   yum: pkg=policycoreutils-python state=present
+
+ - name: set the SELinux policy for the Wordpress directory
+   command: semanage fcontext -a -t httpd_sys_content_t "{{ wp_home_dir }}/wordpress(/.*)?"
+
+ - name: set the SELinux policy for wp-config.php
+   command: semanage fcontext -a -t httpd_sys_script_exec_t "{{ wp_home_dir }}/wp-config\.php"
+
+ - name: set the SELinux policy for wp-content directory
+   command: semanage fcontext -a -t httpd_sys_rw_content_t "{{ wp_home_dir }}/wp-content(/.*)?"
+
+ - name: set the SELinux policy for the *.php files
+   command: semanage fcontext -a -t httpd_sys_script_exec_t "{{ wp_home_dir }}/wordpress/.*\.php"
+
+ - name: set the SELinux policy for the Upgrade directory
+   command: semanage fcontext -a -t httpd_sys_rw_content_t "{{ wp_home_dir }}/wp-content/upgrade(/.*)?"
+
+ - name: set the SELinux policy for the Uploads directory
+   command: semanage fcontext -a -t httpd_sys_rw_content_t "{{ wp_home_dir }}/wp-content/uploads(/.*)?"
+
+ - name: set the SELinux policy for the wp-includes php files
+   command: semanage fcontext -a -t httpd_sys_script_exec_t "{{ wp_home_dir }}/wp-includes/.*\.php"
+
+ - name: set the SELinux on all the Files
+   command: restorecon -Rv {{ wp_home_dir }}
+
+ - name: set the SELinux bool to allow connection to db
+   command: setsebool -P httpd_can_network_connect_db 1 
+
+ - name: Start php-fpm Service
+   service: name=php74-php-fpm state=started enabled=yes 
+   ignore_errors: yes

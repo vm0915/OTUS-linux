@@ -5,3 +5,4 @@ wp_db_name: wordpress
 wp_db_user: wordpress
 wp_db_password: secret
 phpfpm_unix_socket: /var/opt/remi/php74/run/php-fpm/php-fpm.sock
+wp_home_dir: /usr/share/nginx/html/
