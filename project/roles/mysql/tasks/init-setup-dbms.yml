@@ -16,4 +16,8 @@
    yum:
      name: MySQL-python
      state: installed
-   notify: set root password
+   notify: Set MySQL root Password
+
+
+ - name: Flush handlers
+   meta: flush_handlers
