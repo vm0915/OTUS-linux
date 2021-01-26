@@ -5,14 +5,14 @@
      state: latest
 
  - name: Install borgbackup
-   yum: 
+   yum:
      name: borgbackup
      state: present
 
 
  - name: Copy backup script 
    template:
-     src: borgbackup.sh.j2 
+     src: borgbackup.sh.j2
      dest: "{{ path_to_backup_script }}"
      mode: '0740'
 
@@ -32,4 +32,4 @@
    systemd:
      name: borg-backup.timer
      state: started
-     enabled: yes 
+     enabled: yes

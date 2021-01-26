@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
 LOCKFILE=/run/mysqlborg.pid
-DIR=/var/lib/mysql/backup
+DIR={{ wp_home_dir }}
 
 
 cleaning(){
@@ -10,7 +9,7 @@ rm -f "$LOCKFILE"; exit $?
 }
 
 if [ ! -d "$DIR" ]
-  then 
+  then
   mkdir -p $DIR
 fi
 
@@ -19,15 +18,13 @@ then
 # trap на случай преждевременного завершения
 trap 'cleaning' INT TERM EXIT
 
-mysqldump -u root --password="{{ mysql_root_password }}" --all-databases > $DIR/all_databases.sql
-
 # Client and server name
 CLIENT={{ borg_ssh_user }}
 SERVER={{ borg_server_ip }}
 
 # Backup type, it may be data, system, mysql, binlogs, etc.
 TYPEOFBACKUP=mysql
-REPOSITORY=$CLIENT@$SERVER:{{ server_backup_dir_mysql }}
+REPOSITORY=$CLIENT@$SERVER:{{ server_backup_dir_wordpress }}
 
 # Backup
 BORG_PASSPHRASE="{{ borg_passphare }}" \
@@ -46,3 +43,4 @@ borg prune -v --show-rc --list $REPOSITORY \
 else
   echo "Предыдущий процесс еще не завершился"
 fi
+

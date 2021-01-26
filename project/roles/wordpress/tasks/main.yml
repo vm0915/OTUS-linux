@@ -42,3 +42,5 @@
  - name: Start php-fpm Service
    service: name=php74-php-fpm state=started enabled=yes 
    ignore_errors: yes
+
+ - include_tasks: setup-borgbackup-client.yml
