@@ -32,7 +32,7 @@ REPOSITORY=$CLIENT@$SERVER:{{ server_backup_dir_mysql }}
 # Backup
 BORG_PASSPHRASE="{{ borg_passphare }}" \
 BORG_RSH="ssh -o 'StrictHostKeyChecking=no' -i {{ borg_client_key_path }}" \
-borg create -v --stats $REPOSITORY::'{now:%Y-%m-%d-%H-%M}' /etc \
+borg create -v --stats $REPOSITORY::'{now:%Y-%m-%d-%H-%M}' $DIR \
 2>&1 | logger &
 
 
