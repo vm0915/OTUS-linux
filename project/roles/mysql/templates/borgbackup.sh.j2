@@ -1,0 +1,46 @@
+#!/bin/bash
+
+
+LOCKFILE=/run/mysqlborg.pid
+DIR=/var/lib/mysql/backup
+
+
+cleaning(){
+rm -f "$LOCKFILE"; exit $?
+}
+
+if [ ! -d "$DIR" ]
+  then 
+  mkdir -p $DIR
+fi
+
+if (set -o noclobber; echo "$$" > "$LOCKFILE") &> /dev/null
+then
+# trap на случай преждевременного завершения
+trap 'cleaning' INT TERM EXIT
+
+# Client and server name
+CLIENT={{ borg_ssh_user }}
+SERVER={{ borg_server_ip }}
+
+# Backup type, it may be data, system, mysql, binlogs, etc.
+TYPEOFBACKUP=etc
+REPOSITORY=$CLIENT@$SERVER:{{ server_backup_dir_mysql }}
+
+# Backup
+BORG_PASSPHRASE="{{ borg_passphare }}" \
+BORG_RSH="ssh -o 'StrictHostKeyChecking=no' -i {{ borg_client_key_path }}" \
+borg create -v --stats $REPOSITORY::'{now:%Y-%m-%d-%H-%M}' /etc \
+2>&1 | logger &
+
+
+# After backup
+BORG_PASSPHRASE="{{ borg_passphare }}" \
+BORG_RSH="ssh -o 'StrictHostKeyChecking=no' -i {{ borg_client_key_path }}" \
+borg prune -v --show-rc --list $REPOSITORY \
+ --keep-daily=7 --keep-monthly=6
+
+
+else
+  echo "Предыдущий процесс еще не завершился"
+fi

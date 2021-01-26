@@ -7,3 +7,9 @@ wp_db_password: secret
 phpfpm_unix_socket: /var/opt/remi/php74/run/php-fpm/php-fpm.sock
 wp_home_dir: /usr/share/nginx/html/
 mysql_root_password: pass1
+borg_ssh_user: vagrant
+borg_server_ip: 192.168.30.5
+borg_passphare: otus
+borg_client_key_path: /root/.ssh/borg
+server_backup_dir_mysql: /backups/mysql
+server_backup_dir_wordpress: /backups/wordpress

@@ -3,6 +3,7 @@
    mysql_db:
      login_host: localhost
      login_user: root
+     login_password: "{{ mysql_root_password  }}"
      name: "{{ wp_db_name }}"
      state: present
 
@@ -10,6 +11,8 @@
  - name: Create WordPress database user
    mysql_user:
      login_host: localhost
+     login_user: root
+     login_password: "{{ mysql_root_password  }}"
      name: "{{ wp_db_user }}"
      password: "{{ wp_db_password }}"
      priv: "{{ wp_db_name }}.*:ALL"

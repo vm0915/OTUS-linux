@@ -10,7 +10,26 @@
      state: present
 
 
- - name: Copy script .service .timer
+ - name: Copy backup script .service .timer
+   template:
+     src: borgbackup.sh.j2 
+     dest: "{{ path_to_backup_script }}"
+     mode: '0740'
 
 
- - name: enable timer
+ - name: Copy borg-backup.service
+   template:
+     src: borg-backup.service.j2
+     dest: /etc/systemd/system/borg-backup.service
+
+
+ - name: Copy borg-backup.timer
+   template:
+     src: borg-backup.timer.j2
+     dest: /etc/systemd/system/borg-backup.timer
+
+ - name: Enable borg-backup.timer
+   systemd:
+     name: borg-backup.timer
+     state: started
+     enabled: yes 
