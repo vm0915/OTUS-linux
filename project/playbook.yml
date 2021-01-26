@@ -29,3 +29,12 @@
 
    roles:
      - router
+
+ - name: Configure Backup-server
+   hosts: backupsServer
+   remote_user: vagrant
+   become: yes
+
+
+   roles:
+     - borgbackup-server

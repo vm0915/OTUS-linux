@@ -27,12 +27,12 @@ MACHINES = {
                   # {ip: '192.168.10.20', adapter: 3, netmask: "255.255.255.0"},
 		]
   },
-#  :backupsServer => {
-#        :box_name => "centos/7",
-#        :net => [
-#                   {ip: '192.168.30.5', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
-#                ]
-#  },
+  :backupsServer => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.30.5', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
+                ]
+  },
 #  :zabbixServer => {
 #        :box_name => "centos/7",
 #        :net => [

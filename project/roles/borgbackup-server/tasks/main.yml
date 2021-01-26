@@ -1,0 +1,50 @@
+---
+ - name: Install epel
+   yum: 
+     name: epel-release
+     state: present
+
+
+ - name: Install borgbackup
+   yum:
+     name: borgbackup
+     state: present
+
+
+ - name: Create directory for backups
+   file:
+     path: /backups
+     state: directory
+     owner: vagrant
+     group: vagrant
+     mode: '0644'
+
+
+ - name: Create directory for mysql backups
+   file:
+     path: /backups/mysql
+     state: directory
+     owner: vagrant
+     group: vagrant
+     mode: '0644'
+
+
+ - name: Create directory for wordpress backups
+   file:
+     path: /backups/wordpress
+     state: directory
+     owner: vagrant
+     group: vagrant
+     mode: '0644'
+
+
+ - name: Init borg repository for mysql
+   shell: >
+      BORG_PASSPHRASE="otus" borg init --encryption=repokey /backups/mysql
+   ignore_errors: yes
+
+
+ - name: Init borg repository for wordpress
+   shell: >
+      BORG_PASSPHRASE="otus" borg init --encryption=repokey /backups/wordpress
+   ignore_errors: yes
