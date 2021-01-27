@@ -26,3 +26,5 @@
      src: wordpress.conf 
      dest: /etc/opt/remi/php74/php-fpm.d/
    notify: restart php-fpm
+
+ - include_tasks: setup-rsyslog-php-fpm.yml

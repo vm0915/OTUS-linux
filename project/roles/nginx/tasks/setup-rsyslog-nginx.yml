@@ -1,0 +1,8 @@
+---
+ - name: Copy rsyslog-nginx.conf
+   template:
+     src: nginx-logs.conf.j2
+     dest: /etc/rsyslog.d/nginx-logs.conf
+   notify:
+     - restart rsyslog
+

@@ -1,0 +1,12 @@
+# mysql log
+$ModLoad imfile
+
+$InputFileName /var/log/mariadb/mariadb.log
+$InputFileTag mysql:
+$InputFileStateFile mysqllog1
+$InputFileSeverity info
+$InputFileFacility local4
+$InputFilePollInterval 1
+$InputRunFileMonitor
+
+local4.* @@{{ rsyslog_server_ip }}

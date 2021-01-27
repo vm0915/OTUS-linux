@@ -17,3 +17,8 @@
      state: started
      enabled: yes
      name: nginx
+
+ - name: restart rsyslog
+   service:
+     name: rsyslog
+     state: restarted

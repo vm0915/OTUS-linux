@@ -1,0 +1,12 @@
+---
+ - name: Check if rsyslog installed
+   yum:
+     name: rsyslog
+     state: present
+
+ - name: Copy rsyslog config
+   copy:
+     src: rsyslog.conf
+     dest: /etc/rsyslog.conf
+   notify:
+     - restart rsyslog 

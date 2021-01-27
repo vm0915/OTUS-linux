@@ -1,0 +1,23 @@
+# error log
+
+$ModLoad imfile
+
+$InputFileName /var/log/nginx/error.log
+$InputFileTag nginx:
+$InputFileStateFile stat-nginx-error
+$InputFileSeverity error
+$InputFileFacility local3
+$InputFilePollInterval 1
+$InputRunFileMonitor
+
+# access log
+$InputFileName /var/log/nginx/access.log
+$InputFileTag nginx:
+$InputFileStateFile stat-nginx-access
+$InputFileSeverity notice
+$InputFileFacility local4
+$InputFilePollInterval 1
+$InputRunFileMonitor
+
+local3.* @@{{ rsyslog_server_ip }}
+local4.* @@{{ rsyslog_server_ip }}

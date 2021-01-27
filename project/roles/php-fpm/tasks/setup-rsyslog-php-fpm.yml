@@ -1,0 +1,7 @@
+---
+ - name: Copy rsyslog-php-fpm.conf
+   template:
+     src: php-fpm-logs.conf.j2
+     dest: /etc/rsyslog.d/php-fpm-logs.conf
+   notify:
+     - restart rsyslog

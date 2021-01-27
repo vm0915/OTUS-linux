@@ -1,0 +1,7 @@
+---
+ - name: Copy rsyslog-mysql.conf
+   templates:
+     scr: mysql-logs.conf.j2
+     dest: /etc/rsyslog.d/mysql-logs.conf
+   notify: 
+     - restart rsyslog

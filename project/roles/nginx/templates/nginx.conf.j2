@@ -36,6 +36,8 @@ server {
 
   # Replace this port with the right one for your requirements
   listen 80;
+  return 301 https://$host$request_uri;
+}
 
   listen 443 ssl default_server;
         ssl_certificate {{ cert_path }};

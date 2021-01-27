@@ -33,12 +33,12 @@ MACHINES = {
                    {ip: '192.168.30.5', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
                 ]
   },
-#  :zabbixServer => {
-#        :box_name => "centos/7",
-#        :net => [
-#                   {ip: '192.168.30.4', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
-#                ]
-#  },
+  :zabbixServer => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.30.4', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "intranet"},
+                ]
+  },
 #  :nginxServer => {
 #        :box_name => "centos/7",
 #        :net => [
@@ -118,6 +118,6 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "playbook.yml"
-    ansible.verbose = "v"
+   # ansible.verbose = "v"
   end
 end

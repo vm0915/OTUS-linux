@@ -14,3 +14,8 @@
      password: '{{ mysql_root_password }}'
      state: present
 
+
+ - name: restart rsyslog
+   service: 
+     name: rsyslog
+     state: restarted

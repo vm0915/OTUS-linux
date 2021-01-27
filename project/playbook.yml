@@ -9,6 +9,7 @@
      - php-fpm
      - nginx
      - wordpress
+     - rsyslog-client
 
 
  - name: Install MySQL
@@ -19,6 +20,7 @@
 
    roles:
      - mysql
+     - rsyslog-client
 
 
  - name: Configure router
@@ -29,6 +31,8 @@
 
    roles:
      - router
+     - rsyslog-client
+
 
  - name: Configure Backup-server
    hosts: backupsServer
@@ -38,3 +42,5 @@
 
    roles:
      - borgbackup-server
+     - rsyslog-server
+

@@ -1,0 +1,13 @@
+# php-fpm log
+$ModLoad imfile
+
+$InputFileName /var/opt/remi/php74/log/php-fpm/error.log
+$InputFileTag phpfpm:
+$InputFileStateFile phpfpmlog
+$InputFileSeverity info
+$InputFileFacility local5
+$InputFilePollInterval 1
+$InputRunFileMonitor
+
+local5.* @@{{ rsyslog_server_ip }}
+
