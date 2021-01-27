@@ -3,8 +3,6 @@
    hosts: wordpressServer
    remote_user: vagrant
    become: yes
-
-
    roles:
      - common
      - php-fpm
@@ -18,8 +16,6 @@
    hosts: mysqlServer
    remote_user: vagrant
    become: yes
-
-
    roles:
      - common
      - mysql
@@ -31,8 +27,6 @@
    hosts: inetRouter
    remote_user: vagrant
    become: yes
-  
-
    roles:
      - common
      - router
@@ -44,8 +38,6 @@
    hosts: backupsServer
    remote_user: vagrant
    become: yes
-
-
    roles:
      - common
      - borgbackup-server
@@ -57,8 +49,6 @@
    hosts: zabbixServer
    remote_user: vagrant
    become: yes
-
-
    roles:
      - common
      - zabbix-agent

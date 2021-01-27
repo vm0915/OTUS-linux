@@ -1,7 +1,12 @@
 ---
-- ansible.posix.sysctl:
-     name: vm.swappiness
-     value: '10'
-     sysctl_set: yes
+ - ansible.posix.sysctl:
+    name: vm.swappiness
+    value: '10'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+ - name: Install Epel-release
+   yum: 
+     name: epel-release
      state: present
-     reload: yes
