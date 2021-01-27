@@ -1,0 +1,18 @@
+---
+ - include_tasks: install-zabbix-repo.yml
+
+
+ - name: Install zabbix-agent
+   yum:
+     name: zabbix-agent
+     state: present
+   notify: 
+     - start zabbix-agent
+
+ 
+ - name: Copy config
+   template:
+     src: zabbix_agentd.conf.j2
+     dest: /etc/zabbix/zabbix_agentd.conf
+   notify:
+     - restart zabbix-agent

@@ -1,0 +1,8 @@
+---
+ - include_tasks: install-zabbix-repo.yml
+
+
+ - name: Install zabbix-server
+   yum:
+     name: zabbix-server-mysql
+     state: present

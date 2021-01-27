@@ -1,0 +1,17 @@
+---
+ - name: Copy zabbix repo
+   copy:
+     src: zabbix.repo
+     dest: /etc/yum.repos.d/
+
+
+ - name: Copy GPG key for zabbix repo
+   copy: 
+     src: RPM-GPG-KEY-ZABBIX
+     dest: /etc/pki/rpm-gpg
+ 
+
+- name: Copy 2 GPG key for zabbix repo
+   copy: 
+     src: RPM-GPG-KEY-ZABBIX-A14FE591
+     dest: /etc/pki/rpm-gpg
