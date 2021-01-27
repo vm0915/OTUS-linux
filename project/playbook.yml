@@ -6,10 +6,12 @@
 
 
    roles:
+     - common
      - php-fpm
      - nginx
      - wordpress
      - rsyslog-client
+     - zabbix-agent
 
 
  - name: Install MySQL
@@ -19,8 +21,10 @@
 
 
    roles:
+     - common
      - mysql
      - rsyslog-client
+     - zabbix-agent
 
 
  - name: Configure router
@@ -30,8 +34,10 @@
   
 
    roles:
+     - common
      - router
      - rsyslog-client
+     - zabbix-agent
 
 
  - name: Configure Backup-server
@@ -41,6 +47,18 @@
 
 
    roles:
+     - common
      - borgbackup-server
      - rsyslog-server
+     - zabbix-agent
 
+
+ - name: Configure zabbix
+   hosts: zabbixServer
+   remote_user: vagrant
+   become: yes
+
+
+   roles:
+     - common
+     - zabbix-agent

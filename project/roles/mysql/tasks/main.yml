@@ -2,3 +2,4 @@
  - include_tasks: init-setup-dbms.yml
  - include_tasks: setup-db-for-wordpress.yml
  - include_tasks: setup-borgbackup-client.yml
+ - include_tasks: setup-rsyslog-mysql.yml

@@ -11,7 +11,7 @@
      dest: /etc/pki/rpm-gpg
  
 
-- name: Copy 2 GPG key for zabbix repo
+ - name: Copy 2 GPG key for zabbix repo
    copy: 
      src: RPM-GPG-KEY-ZABBIX-A14FE591
      dest: /etc/pki/rpm-gpg

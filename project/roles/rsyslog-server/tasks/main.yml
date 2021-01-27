@@ -10,3 +10,12 @@
      dest: /etc/rsyslog.conf
    notify:
      - restart rsyslog 
+
+ 
+ - name: Copy log naming config
+   copy:
+     src: remote.conf
+     dest: /etc/rsyslog.d/remote.conf
+   notify:
+     - restart rsyslog
+

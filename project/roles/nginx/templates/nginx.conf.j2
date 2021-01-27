@@ -38,7 +38,7 @@ server {
   listen 80;
   return 301 https://$host$request_uri;
 }
-
+server{
   listen 443 ssl default_server;
         ssl_certificate {{ cert_path }};
         ssl_certificate_key {{ key_path }};
