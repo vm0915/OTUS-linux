@@ -220,7 +220,45 @@ ansible-galaxy collection install community.general
 
 
 
+==================new 28.01
+ 
+ ===1.
+ policycoreutils-python-utils
+ setroubleshoot-server 
+setsebool -P httpd_can_connect_zabbix on
+setsebool -P httpd_can_network_connect_db on 
+ 
+sed 's/#.*$//;/^$/d'
+ 
+ ip route add 1.0.4.4/32 via 192.168.40.1
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -h 192.168.30.3 -u zabbix -p zabbix
+ 
+systemctl restart zabbix-server zabbix-agent nginx php-fpm
+systemctl enable zabbix-server zabbix-agent nginx php-fpm
 
+
+yum install -y policycoreutils-python-utils
+
+
+
+setsebool -P httpd_can_connect_zabbix on
+setsebool -P httpd_can_network_connect_db on 
+systemctl start zabbix-server.service
+ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver
+semodule -X 300 -i my-zabbixserver.pp
+ 
+
+ 
+ /etc/php.ini
+ date.timezone = Europe/Moscow
+ systemctl restart php-fpm.service
+ 
+ Admin/zabbix
+ 
+
+ триггер
+ 
+ {Linux gitlab-latest.dev.rus 4.4.246-1.el7.elrepo.x86_64 _1 SMP Tue Nov 24 09_26_59 EST 2020 x86_64:web.test.rspcode[Availiability of gitlab,Home page].last(#2)}>=400
 
 
 
