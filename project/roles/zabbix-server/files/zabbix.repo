@@ -12,3 +12,10 @@ enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
 gpgcheck=1
 
+[zabbix5]
+name=Zabbix Official Repository - $basearch
+baseurl=http://repo.zabbix.com/zabbix/5.2/rhel/8/$basearch/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX-A14FE591
+

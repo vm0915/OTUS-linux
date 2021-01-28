@@ -4,5 +4,65 @@
 
  - name: Install zabbix-server
    yum:
-     name: zabbix-server-mysql
+     name: ['zabbix-server-mysql', 'zabbix-web-mysql', 'zabbix-nginx-conf']
      state: present
+   notify:
+     - copy phpini
+
+
+ - name: Copy zabbix config
+   template:
+     src: zabbix_server.conf.j2
+     dest: /etc/zabbix/zabbix_server.conf
+
+
+ - name: Copy nginx-zabbix config
+   template:
+     src: nginx_zabbix.conf.j2
+     dest: /etc/nginx/conf.d/zabbix.conf
+
+
+ - name: Copy nginx config
+   template:
+     src: nginx.conf.j2
+     dest: /etc/nginx/nginx.conf
+
+
+ - name: Install Mysql python for ansible
+   yum:
+     name: python3-mysqlclient
+     state: installed
+
+
+ - name: Install Mysql client
+   yum:
+     name: mysql
+     state: installed
+
+
+ - name: Install SELinux utils
+   yum: 
+    name: policycoreutils-python-utils
+    state: present
+
+
+ - name: Set httpd_can_connect_zabbix flag on and keep it persistent across reboots
+   ansible.posix.seboolean:
+     name: httpd_can_connect_zabbix
+     state: yes
+     persistent: yes
+
+ - name: Set httpd_can_network_connect_db flag on and keep it persistent across reboots
+   ansible.posix.seboolean:
+     name: httpd_can_network_connect_db
+     state: yes
+     persistent: yes
+   notify:
+     - Create SE module
+
+
+ - name: Start zabbix server 
+   service:
+     name: zabbix-server
+     state: started
+   ignore_errors: yes

@@ -1,0 +1,26 @@
+---
+ - name: Create SE module
+   shell:
+     chdir: /root
+     cmd: ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver 
+   notify:
+     - Load SE module
+
+ - name: Load SE module
+   shell:
+     chdir: /root
+     cmd: semodule -X 300 -i my-zabbixserver.pp
+
+
+ - name: copy phpini
+   template:
+     src: php.ini
+     dest: /etc/php.ini
+   notify:
+     - restart php-fpm   
+
+
+ - name: restart php-fpm
+   service:
+     name: php-fpm
+     state: restarted

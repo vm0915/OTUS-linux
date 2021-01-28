@@ -6,7 +6,7 @@
 
  - name: Install nginx
    yum:
-     name: nginx-1.16.1-3.el7
+     name: nginx
      state: present
    notify: start nginx
 

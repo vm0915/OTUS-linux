@@ -15,3 +15,7 @@ server_backup_dir_mysql: /backups/mysql
 server_backup_dir_wordpress: /backups/wordpress
 rsyslog_server_ip: 192.168.30.5
 zabbix_server_ip: 192.168.30.4
+zabbix_db_server_ip: 192.168.30.3
+zabbix_db_name: zabbix
+zabbix_db_user: zabbix
+zabbix_db_password: zabbix
