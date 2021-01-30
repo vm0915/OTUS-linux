@@ -8,6 +8,7 @@
      state: present
    notify:
      - copy phpini
+     - build database
 
 
  - name: Copy zabbix config
@@ -38,6 +39,12 @@
    yum:
      name: mysql
      state: installed
+
+
+ - name: Copy mysql client config
+   template:
+     src: mysql-zabbix.cnf.j2
+     dest: /root/.my.cnf
 
 
  - name: Install SELinux utils

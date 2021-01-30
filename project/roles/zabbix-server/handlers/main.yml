@@ -12,6 +12,16 @@
      cmd: semodule -X 300 -i my-zabbixserver.pp
 
 
+ - name: build database
+   shell:
+     cmd: zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -h 192.168.30.3 -u zabbix zabbix
+   ignore_errors: yes
+   notify:
+     - restart zabbix-server
+     - restart zabbix-agent
+     - restart php-fpm
+     - restart nginx
+
  - name: copy phpini
    template:
      src: php.ini
@@ -24,3 +34,22 @@
    service:
      name: php-fpm
      state: restarted
+     enabled: yes
+
+ - name: restart zabbix-server
+   service:
+     name: zabbix-server
+     state: restarted
+     enabled: yes
+
+ - name: restart zabbix-agent
+   service: 
+     name: zabbix-agent
+     state: restarted
+     enabled: yes
+
+ - name: restart nginx
+   service:
+     name: nginx
+     state: restarted
+     enabled: yes
